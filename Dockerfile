@@ -38,6 +38,7 @@ COPY --from=builder /usr/local/bin /usr/local/bin
 COPY app.py .
 COPY crypto_utils.py .
 COPY totp_utils.py .
+COPY scripts ./scripts
 
 # Copy keys
 COPY student_private.pem .
@@ -45,11 +46,9 @@ COPY instructor_public.pem .
 
 # Copy cron job & script (you will add these next step)
 COPY cron/2fa-cron /etc/cron.d/2fa-cron
-COPY cron/cron_logger.sh /cron/cron_logger.sh
 
 # Set permissions for cron
 RUN chmod 0644 /etc/cron.d/2fa-cron && \
-    chmod +x /cron/cron_logger.sh && \
     crontab /etc/cron.d/2fa-cron
 
 # Create volume mount points
@@ -59,5 +58,5 @@ RUN mkdir -p /data /cron && chmod 755 /data /cron
 EXPOSE 8080
 
 # Start BOTH cron + API server
-CMD service cron start && \
-    uvicorn app:app --host 0.0.0.0 --port 8080
+CMD service cron start && exec uvicorn app:app --host 0.0.0.0 --port 8080
+
