@@ -19,7 +19,12 @@ ENV TZ=UTC
 WORKDIR /app
 
 # Update & install system dependencies
-RUN apt-get update && \apt-get install -y --no-install-recommends \cron \tzdata \&& rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    cron \
+    tzdata \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
 
 # Configure timezone to UTC
 RUN ln -sf /usr/share/zoneinfo/UTC /etc/localtime && \
